@@ -25,7 +25,7 @@
         var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
         //   var apiKey = ("NotMyRealKeyRREJLFJL.KJG.LKJ");
         var client = new SendGridClient(apiKey);
-        var from = new EmailAddress("karen@enchantedfireside.com", "My SendGrid Authenticated Email");
+        var from = new EmailAddress("myemail@myauthenticatedSGaccount.com", "My SendGrid Authenticated Email");
         string subject = newEmail.Subject;
         var to = new EmailAddress(newEmail.Email);
         var plainTextContent = newEmail.Message;  // "and easy to do anywhere, even with C#";
