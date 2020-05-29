@@ -1,0 +1,41 @@
+﻿@page "/email4"
+@using System.Threading.Tasks;
+@using SendGrid;
+@using SendGrid.Helpers.Mail;
+@using Microsoft.Extensions.Configuration  <!--  1-  ADDED TO ACCESS APIKEY from appsettings.json file -->
+@using BlazorApp11.Data;  
+
+@inject IConfiguration Configuration  
+                          <!-- 2-  ADDED TO ACCESS APIKEY from appsettings.json file -->
+<h3>Email 4 - Code to get APIKey from appsettings.json file</h3>
+
+<EditForm Model="@newEmail" OnValidSubmit="@ExecuteEmail">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <InputText id="Name" placeholder="Your Name" @bind-Value="newEmail.Name" :null /><br /><br />
+    <InputText id="Email" placeholder="Your Email" @bind-Value="newEmail.Email" :null /><br /><br />
+    <InputText id="Subject" placeholder="Subject" @bind-Value="newEmail.Subject" :null /><br /><br />
+    <InputText id="Message" placeholder="Message" @bind-Value="newEmail.Message" :null /><br /><br />
+    <button type="submit" class="btn btn-primary">Send Email</button>
+</EditForm>
+
+@code {
+ 
+    public EmailModel newEmail = new EmailModel();
+
+    public async Task ExecuteEmail()   //no longer static because the values from form are dynamic
+    {
+        // var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+        var apiKey = Configuration["SENDGRID_API_KEY"];
+        //   var apiKey = ("NotMyRealKeyRREJLFJL.KJG.LKJ");
+        var client = new SendGridClient(apiKey);
+        var from = new EmailAddress("karen@enchantedfireside.com", "My SendGrid Authenticated Email");
+        string subject = newEmail.Subject;
+        var to = new EmailAddress(newEmail.Email);
+        var plainTextContent = newEmail.Message;  // "and easy to do anywhere, even with C#";
+        var htmlContent = "<strong>" + plainTextContent + " in html </strong>";
+        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+        var response = await client.SendEmailAsync(msg);
+        newEmail = new EmailModel();
+    }
+}

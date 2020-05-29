@@ -1,0 +1,30 @@
+﻿@page "/email"
+@using System.Threading.Tasks;
+@using SendGrid;
+@using SendGrid.Helpers.Mail;
+
+<h3>Email - Bare Minimum Code for SendGrid</h3>
+
+<button class="btn btn-primary" @onclick="ExecuteEmail">Click to email</button>
+
+@code 
+{
+    // from SendGrid  https://app.sendgrid.com/guide/integrate/langs/csharp
+    // Windows 10 set Environment variabe (Settings / System/ About/ System Info /
+    // Advanced System Settings / Environment Variables  / SYSTEM Environment Variables (NOT USER)
+    // REBOOT AFTER SETTING THE ENVIRONMENTAL VARIABLE
+        
+    public static async Task ExecuteEmail()
+    {
+        var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+        // OR just paste in the key:  var apiKey = ("NotMyRealKeyRREJLFJL.KJG.LKJ");
+        var client = new SendGridClient(apiKey);
+        var from = new EmailAddress("karen@enchantedfireside.com", "My SendGrid Authenticated Email");
+        var subject = "Sending with SendGrid is Fun";
+        var to = new EmailAddress("kdiverdi1@gmail.com", "Example User");
+        var plainTextContent = "and easy to do anywhere, even with C#";
+        var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
+        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+        var response = await client.SendEmailAsync(msg);
+    }
+}
